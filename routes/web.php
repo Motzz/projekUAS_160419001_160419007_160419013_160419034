@@ -20,3 +20,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::resource('categories', 'CategoriesController')->middleware('auth');
+Route::resource('medicines', 'MedicinesController')->middleware('auth');
+Route::resource('users', 'UserController')->middleware('auth');
+Route::resource('stokAwal', 'StokAwalController')->middleware('auth');
+Route::resource('adjustmentStok', 'AdjustmentStokController')->middleware('auth');
+Route::resource('transaction', 'TransactionController')->middleware('auth');
+

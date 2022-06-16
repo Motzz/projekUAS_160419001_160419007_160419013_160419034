@@ -39,6 +39,8 @@
                             </div>
                         </div>
 
+                      
+                        <input type="hidden" name="role" value="buyer">
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
