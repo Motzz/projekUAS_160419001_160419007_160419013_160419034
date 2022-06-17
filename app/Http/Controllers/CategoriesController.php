@@ -56,7 +56,7 @@ class CategoriesController extends Controller
         //
         $user = Auth::user();
         
-        DB::table('categories')
+        /*DB::table('categories')
             ->insert(array(
                 'name' => $request->get('name'),
                 'description' => $request->get('description'),
@@ -65,7 +65,19 @@ class CategoriesController extends Controller
                 'updated_by'=> $user->id,
                 'updated_on'=> date("Y-m-d h:i:s"),
             )
-        ); 
+        ); */
+        $data = new Categories();
+        $data->name = $request->get('name');
+        $data->description = $request->get('description');
+        $data->created_by = $user->id;
+        $data->created_on = date("Y-m-d h:i:s");
+        $data->updated_by = $user->id;
+        $data->updated_on = date("Y-m-d h:i:s");
+
+        $data->save();
+
+        //dd($data->id);
+
         return redirect()->route('categories.index')->with('status','Success!!');
     }
 
@@ -99,7 +111,7 @@ class CategoriesController extends Controller
     {
         //
         return view('categories.edit', [
-            'categories' => $categories
+            'categories' => $category
         ]);
     }
 
@@ -120,7 +132,7 @@ class CategoriesController extends Controller
                 'name' => $request->get('name'),
                 'description' => $request->get('description'),
                 'updated_by'=> $user->id,
-                'updated_on'=> date("Y-m-d h:i:sa"),
+                'updated_on'=> date('Y-m-d H:i:s'),
             )
         );
         return redirect()->route('categories.index')->with('status','Success!!');

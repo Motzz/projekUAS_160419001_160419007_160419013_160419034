@@ -81,6 +81,20 @@ class MedicinesController extends Controller
     public function update(Request $request, Medicines $medicines)
     {
         //
+        $user = Auth::user();
+        DB::table('medicines')
+            ->where('id', $medicines['id'])
+            ->update(array(
+                'name' => $request->get('generic_name'),
+                'price' => $request->get('price'),
+                'form' => $request->get('form'),
+                'restriction formula' => $request->get('restriction_formula'),
+                'description' => $request->get('description'),
+                'updated_by'=> $user->id,
+                'updated_on'=> date('Y-m-d H:i:s'),
+            )
+        );
+        return redirect()->route('medicines.index')->with('status','Success!!');
     }
 
     /**

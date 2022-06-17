@@ -36,11 +36,11 @@
                with font-awesome or any other icon font library -->
        
 
-        <li class="nav-header">PEMBUATAN NOTA</li>
+        <li class="nav-header">REPORT</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-table"></i>
-            <p>Nota
+            <p> Obat 
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
@@ -49,7 +49,7 @@
               <a href="{" class="nav-link">
                 <i class="nav-icon fas fa-columns"></i>
                 <p>
-                  Permintaan Pembelian
+                  Obat Terlaris
                 </p>
               </a>
             </li>
@@ -58,31 +58,35 @@
           </ul>
         </li>
 
-
-
-
-
-
-
-
-        <!-- END Permintaan-->
-
-        <li class="nav-header">MASTER</li>
-        <li class="nav-item">
+          <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-search"></i>
-            <p>
-              Lokasi
+            <i class="nav-icon fas fa-table"></i>
+            <p>Customer
               <i class="fas fa-angle-left right"></i>
             </p>
           </a>
           <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="" class="nav-link">
+                <i class="nav-icon fas fa-columns"></i>
+                <p>
+                  Customer Teraktif
+                </p>
+              </a>
+            </li>
+
            
+          </ul>
+        </li>
+        <!-- END Permintaan-->
+
+        <li class="nav-header">MASTER</li>
+       
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-search"></i>
                 <p>
-                  Supplier
+                  Medicine
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
@@ -90,42 +94,44 @@
                 <li class="nav-item">
                   <a href="" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>list Supplier</p>
+                    <p>list Medicine</p>
                   </a>
                 </li>
-          
-          </ul>
-        </li>
+              </ul>
 
-        <!--Menu-->
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-search"></i>
-            <p>
-              Menu & User Role
-              <i class="fas fa-angle-left right"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Menu</p>
+              <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-search"></i>
+                <p>
+                  Category
+                  <i class="fas fa-angle-left right"></i>
+                </p>
               </a>
-            </li>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{route('categories.index')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>list Category</p>
+                  </a>
+                </li>
+              </ul>
 
-            <li class="nav-item">
-              <a href="" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Users</p>
+               <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-search"></i>
+                <p>
+                  User
+                  <i class="fas fa-angle-left right"></i>
+                </p>
               </a>
-            </li>
-
-          
-          </ul>
-
-          <!--RoleAccess place-->
-
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>list User</p>
+                  </a>
+                </li>
+              </ul>
         </li>
         <!--End Menu-->
 
