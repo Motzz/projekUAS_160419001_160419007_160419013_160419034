@@ -58,7 +58,7 @@ Medicines
                                 
                                     <a class="btn btn-default bg-info" href="{{route('categories.edit',[$d->id])}}">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </a> 
 
                                     <button type="button" class="btn btn-default bg-info" data-toggle="modal" data-target="#detail_{{$d->id}}">
                                      <i class="fas fa-eye"></i> 
