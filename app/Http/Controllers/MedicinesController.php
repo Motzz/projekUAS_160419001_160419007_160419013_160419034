@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Medicines;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class MedicinesController extends Controller
 {
@@ -56,7 +58,7 @@ class MedicinesController extends Controller
      */
     public function show(Medicines $medicines)
     {
-        $data=$medicine;
+        $data=$medicines;
         return view('medicine.show',compact('data'));
     }
 

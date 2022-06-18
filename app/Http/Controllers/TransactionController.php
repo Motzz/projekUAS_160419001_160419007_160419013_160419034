@@ -6,6 +6,8 @@ use App\Transaction;
 use App\Medicines;
 use App\Categories;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
@@ -101,7 +103,7 @@ class TransactionController extends Controller
                     'jumlah' => $request->get('quantity')[$i] * -1,
                 )
             );
-            $totalHargaSeluruh = $totalHargaSeluruh + $request->get('quantity')[$i] * $request->get('price')[$i];
+            //$totalHargaSeluruh = $totalHargaSeluruh + $request->get('quantity')[$i] * $request->get('price')[$i];
         }
 
         return redirect()->route('transaction.index')->with('status','Success!!');

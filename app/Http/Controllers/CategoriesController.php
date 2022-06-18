@@ -23,7 +23,7 @@ class CategoriesController extends Controller
 
     public function showList($id_category)
     {
-        $data = Category::find($id_category);
+        $data = Categories::find($id_category);
         $namecategory = $data->name;
         $result = $data->medicines;
         if ($result) $getTotalData = $result->count();
@@ -90,7 +90,7 @@ class CategoriesController extends Controller
     public function show(Categories $category)
     {
         //
-        $data = Category::find($category);
+        $data = Categories::find($category);
         $namecategory = $data->name;
         $result = $data->medicines;
         if ($result) $getTotalData = $result->count();

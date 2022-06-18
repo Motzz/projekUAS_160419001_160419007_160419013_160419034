@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\StokAwal;
+use App\Medicines;
+use App\Categories;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class StokAwalController extends Controller
 {
@@ -15,6 +19,8 @@ class StokAwalController extends Controller
     public function index()
     {
         //
+        $result = StokAwal::all();
+        return view('stokAwal.index', compact('result'));
     }
 
     /**
@@ -25,6 +31,9 @@ class StokAwalController extends Controller
     public function create()
     {
         //
+        $medicine = Medicines::all();
+        $category = Categories::all();
+        return view('stokAwal.create', compact('medicine', 'category'));
     }
 
     /**
@@ -36,6 +45,48 @@ class StokAwalController extends Controller
     public function store(Request $request)
     {
         //
+        $user = Auth::user();
+        $year = date("Y");
+        $month = date("m");
+
+        $dataNota = StokAwal::where('name', 'like', 'SA/' . $year . '/' . $month . "/%")
+            ->get();
+
+        $totalIndex = str_pad(strval(count($dataNota) + 1), 4, '0', STR_PAD_LEFT);
+
+
+        $dataNota = new StokAwal();
+        $dataNota->name = 'SA/' . $year . '/' . $month . "/" . $totalIndex;
+        $dataNota->tanggalDibuat = date("Y-m-d");
+        $dataNota->jumlah =  $request->get('jumlah');
+        $dataNota->description = $request->get('description');
+        $dataNota->medicines_id = $request->get('medicine');
+        $dataNota->created_by = $user->id;
+        $dataNota->created_on = date("Y-m-d h:i:s");
+        $dataNota->updated_by = $user->id;
+        $dataNota->updated_on = date("Y-m-d h:i:s");
+        $dataNota->save();
+
+
+        $idtransaction = DB::table('inventory_transaction')->insertGetId(
+            array(
+                'name' => 'SA/' . $year . '/' . $month . "/" . $totalIndex,
+                'tanggalDibuat	' => date("Y-m-d"),
+                'stock_awal_id	' => $dataNota->id,
+                'created_by' => $user->id,
+                'created_on	' => date("Y-m-d"),
+                'updated_by	' => $user->id,
+                'updated_on	' => date("Y-m-d"),
+            )
+        );
+        DB::table('inventory_transactionline')->insert(
+            array(
+                'inventory_transaction_id' => $idtransaction,
+                'medicines_id	' => $request->get('medicine'),
+                'jumlah' => $request->get('quantity'),
+            )
+        );
+        return redirect()->route('stokAwal.index')->with('status', 'Success!!');
     }
 
     /**
@@ -47,6 +98,9 @@ class StokAwalController extends Controller
     public function show(StokAwal $stokAwal)
     {
         //
+        $medicine = Medicines::all();
+        $category = Categories::all();
+        return view('stokAwal.create', compact('medicine', 'category', 'stokAwal'));
     }
 
     /**
@@ -58,6 +112,9 @@ class StokAwalController extends Controller
     public function edit(StokAwal $stokAwal)
     {
         //
+        $medicine = Medicines::all();
+        $category = Categories::all();
+        return view('stokAwal.edit', compact('medicine', 'category', 'stokAwal'));
     }
 
     /**
@@ -70,6 +127,27 @@ class StokAwalController extends Controller
     public function update(Request $request, StokAwal $stokAwal)
     {
         //
+        $user = Auth::user();
+
+        $stokAwal->tanggalDibuat = date("Y-m-d");
+        $stokAwal->jumlah =  $request->get('jumlah');
+        $stokAwal->description = $request->get('description');
+        $stokAwal->medicines_id = $request->get('medicine');
+        $stokAwal->updated_by = $user->id;
+        $stokAwal->updated_on = date("Y-m-d h:i:s");
+        $stokAwal->save();
+
+        $idIIT = DB::table('ItemInventoryTransaction')->select('id')->where('stock_awal_id', $stokAwal->id)->get();
+        DB::table('inventory_transactionline')
+            ->where('inventory_transaction_id', $idIIT[0]->id)
+            ->update(
+                array(
+                    'medicines_id	' => $request->get('medicine'),
+                    'jumlah' => $request->get('quantity'),
+                )
+            );
+
+        return redirect()->route('stokAwal.index')->with('status', 'Supplier diubah');
     }
 
     /**
@@ -81,5 +159,16 @@ class StokAwalController extends Controller
     public function destroy(StokAwal $stokAwal)
     {
         //
+        $user = Auth::user();
+        $idIIT = DB::table('ItemInventoryTransaction')->select('id')->where('stock_awal_id', $stokAwal->id)->get();
+        DB::table('ItemInventoryTransaction')
+            ->where('stock_awal_id', $stokAwal->id)
+            ->delete();
+
+        DB::table('ItemInventoryTransactionLine')
+            ->where('inventory_transaction_id', $idIIT[0]->id)
+            ->delete();
+
+        $stokAwal->delete();
     }
 }
