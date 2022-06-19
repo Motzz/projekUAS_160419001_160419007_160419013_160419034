@@ -31,7 +31,8 @@ class StokAwalController extends Controller
     public function create()
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 0)
+            ->get();
         $category = Categories::all();
         return view('stokAwal.create', compact('medicine', 'category'));
     }
@@ -67,6 +68,10 @@ class StokAwalController extends Controller
         $dataNota->updated_on = date("Y-m-d h:i:s");
         $dataNota->save();
 
+        $obatDipilih = Medicines::find($request->get('medicine'));
+        $obatDipilih->is_entry = 1;
+        $obatDipilih->save();
+
 
         $idtransaction = DB::table('inventory_transaction')->insertGetId(
             array(
@@ -98,7 +103,9 @@ class StokAwalController extends Controller
     public function show(StokAwal $stokAwal)
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 0)
+            ->orWhere('id', $stokAwal->medicines_id)
+            ->get();
         $category = Categories::all();
         return view('stokAwal.create', compact('medicine', 'category', 'stokAwal'));
     }
@@ -112,7 +119,9 @@ class StokAwalController extends Controller
     public function edit(StokAwal $stokAwal)
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 0)
+            ->orWhere('id', $stokAwal->medicines_id)
+            ->get();
         $category = Categories::all();
         return view('stokAwal.edit', compact('medicine', 'category', 'stokAwal'));
     }
@@ -137,12 +146,20 @@ class StokAwalController extends Controller
         $stokAwal->updated_on = date("Y-m-d h:i:s");
         $stokAwal->save();
 
+        $obatDipilihSebelum = Medicines::find($stokAwal->medicines_id);
+        $obatDipilihSebelum->is_entry = 0;
+        $obatDipilihSebelum->save();
+
+        $obatDipilih = Medicines::find($request->get('medicine'));
+        $obatDipilih->is_entry = 1;
+        $obatDipilih->save();
+
         $idIIT = DB::table('ItemInventoryTransaction')->select('id')->where('stock_awal_id', $stokAwal->id)->get();
         DB::table('inventory_transactionline')
             ->where('inventory_transaction_id', $idIIT[0]->id)
             ->update(
                 array(
-                    'medicines_id	' => $request->get('medicine'),
+                    'medicines_id' => $request->get('medicine'),
                     'jumlah' => $request->get('quantity'),
                 )
             );
@@ -160,6 +177,11 @@ class StokAwalController extends Controller
     {
         //
         $user = Auth::user();
+
+        $obatDipilihSebelum = Medicines::find($stokAwal->medicines_id);
+        $obatDipilihSebelum->is_entry = 0;
+        $obatDipilihSebelum->save();
+
         $idIIT = DB::table('ItemInventoryTransaction')->select('id')->where('stock_awal_id', $stokAwal->id)->get();
         DB::table('ItemInventoryTransaction')
             ->where('stock_awal_id', $stokAwal->id)
@@ -170,5 +192,6 @@ class StokAwalController extends Controller
             ->delete();
 
         $stokAwal->delete();
+        return redirect()->route('stokAwal.index')->with('status', 'Supplier dihapus');
     }
 }
