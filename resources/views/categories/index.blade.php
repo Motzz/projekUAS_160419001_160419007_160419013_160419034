@@ -52,9 +52,7 @@ Categories
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <button type="button" class="btn btn-default bg-info" data-toggle="modal" data-target="#detail_{{$d->id}}">
-                                     <i class="fas fa-eye"></i> 
-                                    </button>
+                      
                                  
 
                                      <button type="button" class="btn btn-default bg-danger" data-toggle="modal" data-target="#delete_{{$d->id}}">

@@ -3,10 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Categories;
 class Medicines extends Model
 {
     protected $table = 'medicines';
+        public $timestamps = false;
     public function category(){
         return $this->belongsTo('App\Category','category_id');
     }
