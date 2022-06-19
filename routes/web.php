@@ -29,3 +29,6 @@ Route::resource('stokAwal', 'StokAwalController')->middleware('auth');
 Route::resource('adjustmentStok', 'AdjustmentStokController')->middleware('auth');
 Route::resource('transaction', 'TransactionController')->middleware('auth');
 
+//index 
+
+
