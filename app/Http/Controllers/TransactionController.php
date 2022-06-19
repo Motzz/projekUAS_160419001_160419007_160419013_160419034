@@ -19,7 +19,9 @@ class TransactionController extends Controller
     public function index()
     {
         //
-        $result = Transaction::all();
+        $result = Transaction::orderBy('id', 'DESC')
+            ->orderBy('transaction_date', 'DESC')
+            ->get();
         return view('transaction.index', compact('result'));
     }
 
@@ -31,7 +33,8 @@ class TransactionController extends Controller
     public function create()
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 1)
+            ->get();
         $category = Categories::all();
         return view('transaction.create', compact('medicine', 'category'));
     }
@@ -54,7 +57,6 @@ class TransactionController extends Controller
             ->get();
 
         $totalIndex = str_pad(strval(count($dataNota) + 1), 4, '0', STR_PAD_LEFT);
-
 
         $dataNota = new Transaction();
         $dataNota->name = 'NT/'. $year . '/' . $month . "/". $totalIndex;
@@ -79,6 +81,21 @@ class TransactionController extends Controller
             );
             $totalHargaSeluruh = $totalHargaSeluruh + $request->get('quantity')[$i] * $request->get('price')[$i];
         }
+        
+        /*
+        Medecine --> "Medicines::find($request->get('medicine'));"
+         dikerem compact($category, $medecine)
+         --pilih category--
+        category[id] == $medecine->category_id{
+            combobox selected
+        }else{
+            combobox tanpa selected
+        }
+        */
+
+        $obatDipilih = Medicines::find($request->get('medicine'));
+        $obatDipilih->is_buy = 1;
+        $obatDipilih->save();
 
         $notaDipilih = Transaction::find($dataNota->id);
         $notaDipilih->total = $totalHargaSeluruh;
@@ -120,7 +137,8 @@ class TransactionController extends Controller
     public function show(Transaction $transaction)
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 1)
+            ->get();
         $category = Categories::all();
         $user = Auth::user();
         return view('transaction.create', compact('medicine', 'category', 'transaction','user'));

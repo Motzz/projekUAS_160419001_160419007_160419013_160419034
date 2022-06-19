@@ -107,7 +107,7 @@ class StokAwalController extends Controller
             ->orWhere('id', $stokAwal->medicines_id)
             ->get();
         $category = Categories::all();
-        return view('stokAwal.create', compact('medicine', 'category', 'stokAwal'));
+        return view('stokAwal.show', compact('medicine', 'category', 'stokAwal'));
     }
 
     /**

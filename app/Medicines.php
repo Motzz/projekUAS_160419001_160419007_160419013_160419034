@@ -14,8 +14,15 @@ class Medicines extends Model
 
     public function transactions()
     {
-        return $this->belongsToMany('App\Transaction', 'medicine_transaction', 'medicines_id', 'transaction_id',)
+        return $this->belongsToMany('App\Transaction', 'medicine_transaction', 'medicines_id', 'transaction_id')
         ->withPivot('id', 'quantity', 'price', 'totalprice');
+    }
+
+    public function transactionQuantity()
+    {
+        return $this->belongsToMany('App\Transaction', 'medicine_transaction', 'medicines_id', 'transaction_id',)
+            ->selectRaw('sum(quantity) as totalQuantity')
+            ->groupBy('medicines_id');
     }
 
     public function stokAwals()

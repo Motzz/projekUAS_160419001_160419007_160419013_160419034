@@ -23,7 +23,7 @@ Tambah Menu
 <div class="card card-primary">
     <!-- form start -->
     <form action="{{route('categories.update', [$categories->id])}}" method="POST" >
-         @csrf
+        @csrf
         @method('PUT')
         <div class="card-body">
 

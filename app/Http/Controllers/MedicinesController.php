@@ -70,11 +70,20 @@ class MedicinesController extends Controller
         $data->updated_by=$user->id;
         $data->updated_on=date("Y-m-d h:i:sa");
 
-        $file = $request->file('gambarObat');
-        $imgFolder = 'img';
-        $imgFile = time()."_".$file->getClientOriginalName();
-        $file->move($imgFolder, $imgFile);
-        $data->urlGambar=$imgFile;
+
+        $validatedData = $request->validate([
+            'gambarObat' => 'required|image|mimes:jpg,png,jpeg,svg|max:6048',
+        ]);
+        $path = "";
+        if ($request->hasFile('gambarObat')) {
+            $image = $request->file('gambarObat');
+            $image_name = $image->getClientOriginalName();
+            $image->move(public_path('/img'), $image_name);
+
+            $path = '/img/' . $image_name;
+             $data->urlGambar=$path;
+        }
+       
         $data->save();
 
         return redirect()->route('medicines.index')->with('status','Success!!');
@@ -98,9 +107,15 @@ class MedicinesController extends Controller
      * @param  \App\Medicines  $medicines
      * @return \Illuminate\Http\Response
      */
-    public function edit(Medicines $medicines)
+    public function edit(Medicines $medicine)
     {
         //
+        $kategori=Categories::all();
+       // dd($medicine);
+          return view('medicine.edit', [
+            'medicines'=>$medicine,
+            'kategori' => $kategori
+        ]);
     }
 
     /**
@@ -110,23 +125,30 @@ class MedicinesController extends Controller
      * @param  \App\Medicines  $medicines
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Medicines $medicines)
+    public function update(Request $request, Medicines $medicine)
     {
         //
-        $file = $request->file('gambarObat');
-        $imgFolder = 'img';
-        $imgFile = time()."_".$file->getClientOriginalName();
-        $file->move($imgFolder, $imgFile);
-        $data->urlGambar=$imgFile;
+        $validatedData = $request->validate([
+            'gambarObat' => 'image|mimes:jpg,png,jpeg,svg|max:6048',
+        ]);
+        $path = $medicine->urlGambar;
+        if ($request->hasFile('gambarObat')) {
+            $image = $request->file('gambarObat');
+            $image_name = time()."_".$image->getClientOriginalName();
+            $image->move(public_path('/img'), $image_name);
+
+            $path = '/img/' . $image_name;
+        }
+
 
         $user = Auth::user();
         DB::table('medicines')
-            ->where('id', $medicines['id'])
+            ->where('id', $medicine['id'])
             ->update(array(
                 'generic_name' => $request->get('generic_name'),
                 'price' => $request->get('price'),
                 'form' => $request->get('form'),
-                'restriction formula' => $request->get('restriction_formula'),
+                'restriction_formula' => $request->get('restriction_formula'),
                 'description' => $request->get('description'),
                 'faskes1' => $request->get('faskes1'),
                 'faskes2' => $request->get('faskes2'),
@@ -134,7 +156,7 @@ class MedicinesController extends Controller
                 'category_id' => $request->get('kategori'),
                 'updated_by'=> $user->id,
                 'updated_on'=> date('Y-m-d H:i:s'),
-                'urlGambar'=>$imgFile
+                'urlGambar'=>$path
             )
         );
         return redirect()->route('medicines.index')->with('status','Success update medicine data!!');
@@ -149,7 +171,12 @@ class MedicinesController extends Controller
     public function destroy(Medicines $medicines)
     {
         //
-        $medicines->delete();
-        return redirect()->route('medicines.index')->with('status','Delete Success!!');  
+        if($medicines->is_buy == 0){
+            $medicines->delete();
+            return redirect()->route('medicine.index')->with('status','Delete Success!!');  
+        }
+        else{
+            return redirect()->route('medicine.index')->with('status','Delete Failed!!');  
+        }
     }
 }

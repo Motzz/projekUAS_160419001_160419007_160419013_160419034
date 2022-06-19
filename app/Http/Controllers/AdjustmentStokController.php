@@ -31,7 +31,8 @@ class AdjustmentStokController extends Controller
     public function create()
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 1)
+            ->get();
         $category = Categories::all();
         return view('adjustmentStok.create', compact('medicine', 'category'));
     }
@@ -100,7 +101,8 @@ class AdjustmentStokController extends Controller
     public function show(AdjustmentStok $AdjustmentStok)
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 1)
+            ->get();
         $category = Categories::all();
         return view('adjustmentStok.show', compact('medicine', 'category','AdjustmentStok'));
     }
@@ -114,7 +116,8 @@ class AdjustmentStokController extends Controller
     public function edit(AdjustmentStok $AdjustmentStok)
     {
         //
-        $medicine = Medicines::all();
+        $medicine = Medicines::where('is_entry', 1)
+            ->get();
         $category = Categories::all();
         return view('adjustmentStok.edit', compact('medicine', 'category','AdjustmentStok'));
     }

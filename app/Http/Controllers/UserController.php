@@ -19,8 +19,8 @@ class UserController extends Controller
     {
         //
         $data = DB::table('users')
-            ->select();
-        return view('users.index', [
+            ->get();
+        return view('user.index', [
             'data' => $data,
         ]);
     }
@@ -33,7 +33,7 @@ class UserController extends Controller
     public function create()
     {
         //
-        return view('users.store');
+        return view('user.create');
     }
 
     /**
@@ -45,7 +45,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
-        $data = $request->collect();
         $user = Auth::user();
 
         $idUsers = DB::table('users')
@@ -59,7 +58,7 @@ class UserController extends Controller
                     'updated_at' => date("Y-m-d h:i:s"),
                 )
         );
-        return redirect()->route('users.index')->with('status','Success!!');
+        return redirect()->route('user.index')->with('status','Success!!');
 
     }
 
@@ -72,7 +71,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         //
-        return view('users.edit', [
+        return view('user.edit', [
             'user' => $user,
         ]);
     }
@@ -86,7 +85,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         //
-        return view('users.edit', [
+        return view('user.edit', [
             'user' => $user,
         ]);
     }
@@ -101,17 +100,32 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         //
-        $data = $request->collect();
-        $userss = Auth::user();
-        DB::table('users')
+        $users = Auth::user();
+
+        if ($request->get('password') == "" || $request->get('password') == null) {
+            DB::table('users')
             ->where('id', $user['id'])
             ->update(array(
                 'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'role' => $request->get('role'),
+                'updated_at' => date("Y-m-d h:i:s"),
+            )
+        );
+        } else {
+            DB::table('users')
+            ->where('id', $user['id'])
+            ->update(array(
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
                 'password' => Hash::make($request->get('password')),
                 'role' => $request->get('role'),
                 'updated_at' => date("Y-m-d h:i:s"),
             )
         );
+        }
+
+
         return redirect()->route('users.index')->with('status','Success!!');
 
     }
