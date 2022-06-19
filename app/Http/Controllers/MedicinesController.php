@@ -149,7 +149,7 @@ class MedicinesController extends Controller
     public function destroy(Medicines $medicines)
     {
         //
-        $category->delete();
+        $medicines->delete();
         return redirect()->route('medicines.index')->with('status','Delete Success!!');  
     }
 }
