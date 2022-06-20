@@ -14,7 +14,9 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-
+<!-- Cart -->
+@include('layouts.cart')
+    <!-- /.Cart -->
 
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">

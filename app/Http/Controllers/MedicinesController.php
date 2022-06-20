@@ -179,4 +179,33 @@ class MedicinesController extends Controller
             return redirect()->route('medicine.index')->with('status','Delete Failed!!');  
         }
     }
+
+    public function front_index()
+    {
+        $medicines = Medicines::all();
+        return view('frontend.product', compact('medicines'));
+    }
+
+    public function addToCart($id)
+    {
+        $p = Medicines::find($id);
+        $cart = session()->get('cart');
+        if (!isset($cart[$id])) {
+            $cart[$id] = [
+                "name" => $p->generic_name . "(" . $p->form . ")",
+                "quantity" => 1,
+                "price" => $p->price,
+                "photo" => $p->image
+            ];
+        } else {
+            $cart[$id]['quantity']++;
+        }
+        session()->put('cart', $cart);
+        return redirect()->back()->with('success', 'Product ' . $cart[$id]['name'] . " jumlah " . $cart[$id]['quantity']);
+    }
+
+    public function checkout()
+    {
+        return view('frontend.checkout');
+    }
 }

@@ -18,11 +18,10 @@ class Medicines extends Model
         ->withPivot('id', 'quantity', 'price', 'totalprice');
     }
 
-    public function transactionQuantity()
+    public function inventoryTransaction()
     {
-        return $this->belongsToMany('App\Transaction', 'medicine_transaction', 'medicines_id', 'transaction_id',)
-            ->selectRaw('sum(quantity) as totalQuantity')
-            ->groupBy('medicines_id');
+        return $this->belongsToMany('App\InventoryTransaction', 'inventory_transactionline', 'medicines_id', 'inventory_transaction_id')
+        ->withPivot('id', 'jumlah');
     }
 
     public function stokAwals()

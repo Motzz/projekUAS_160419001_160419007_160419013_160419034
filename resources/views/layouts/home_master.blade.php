@@ -82,6 +82,10 @@
     <!-- Navbar -->
     @include('layouts.navbar')
     <!-- /.navbar -->
+    
+     <!-- Cart -->
+     @include('layouts.cart')
+    <!-- /.Cart -->
 
     <!-- Main Sidebar Container -->
     @include('layouts.sidebar')

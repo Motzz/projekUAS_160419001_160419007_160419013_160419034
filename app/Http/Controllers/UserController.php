@@ -114,7 +114,7 @@ class UserController extends Controller
         );
         } else {
             DB::table('users')
-            ->where('id', $user['id'])
+            ->where('id', $user['id'])//woii su ngapain coggg woii  delok o dc cogg, ngebug kartu stok asuuu
             ->update(array(
                 'name' => $request->get('name'),
                 'email' => $request->get('email'),
