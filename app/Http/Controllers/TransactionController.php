@@ -58,6 +58,24 @@ class TransactionController extends Controller
 
         $totalIndex = str_pad(strval(count($dataNota) + 1), 4, '0', STR_PAD_LEFT);
 
+        //checkstock barang
+        $medicineCheckStock = Medicines::where('is_entry', 1)
+            ->get();
+        for ($i = 0; $i < count($request->get('medicine')); $i++) {
+            $totalCheckStock=0;
+            foreach($medicineCheckStock as $m){
+                if($medicineCheckStock->id == $request->get('medicine')[$i]){
+                    foreach($medicineCheckStock->inventoryTransaction as $c){
+                        $totalCheckStock += $c->jumlah;
+                    }
+                }
+            }
+            if($totalCheckStock < $request->get('quantity')){
+                return redirect()->route('transaction.index')->with('status','Item yang dibeli tidak mencukupi jumlah stok');
+            }
+        }
+
+
         $dataNota = new Transaction();
         $dataNota->name = 'NT/'. $year . '/' . $month . "/". $totalIndex;
         $dataNota->transaction_date = date("Y-m-d");
