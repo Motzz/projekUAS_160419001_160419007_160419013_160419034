@@ -7,13 +7,13 @@
  </style>
 
 @section('judul')
-Edit Medicines
+Edit Medicine
 @endsection
 
 @section('pathjudul')
 <li class="breadcrumb-item"><a href="/home">Home</a></li>
 <li class="breadcrumb-item">Master</li>
-<li class="breadcrumb-item"><a href="{{route('medicines.index')}}">medicine</a></li>
+<li class="breadcrumb-item"><a href="{{route('medicines.index')}}">Medicine</a></li>
 <li class="breadcrumb-item active">Edit</li>
 @endsection
 
@@ -108,7 +108,7 @@ Edit Medicines
                         <input type="file" class="form-control" id="exampleInputEmail1" placeholder="Enter text" name="gambarObat" id="gambarObat"
                          accept="image/png, image/jpeg,image/jpg">
                          <br>
-                        <img src="{{asset($medicines->urlGambar)}}" alt='' width='100'>
+                        <img src="{{asset('/img/'.$medicines->urlGambar)}}" alt='' width='100'>
                         @error('image')
                             <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
                         @enderror

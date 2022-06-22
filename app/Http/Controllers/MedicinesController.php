@@ -70,6 +70,11 @@ class MedicinesController extends Controller
         $data->updated_by=$user->id;
         $data->updated_on=date("Y-m-d h:i:sa");
 
+       /* $file = $request->file('logo');
+        $imgFolder = 'img';
+        $imgFile = time()."_".$file->getClientOriginalName();
+        $file->move($imgFolder, $imgFile);
+        $data->logo=$imgFile;*/
 
         $validatedData = $request->validate([
             'gambarObat' => 'required|image|mimes:jpg,png,jpeg,svg|max:6048',
@@ -78,10 +83,10 @@ class MedicinesController extends Controller
         if ($request->hasFile('gambarObat')) {
             $image = $request->file('gambarObat');
             $image_name = $image->getClientOriginalName();
-            $image->move(public_path('/img'), $image_name);
+            $image->move(public_path('img'), $image_name);
 
-            $path = '/img/' . $image_name;
-             $data->urlGambar=$path;
+            $path = $image_name;
+            $data->urlGambar=$path;
         }
        
         $data->save();
@@ -135,9 +140,9 @@ class MedicinesController extends Controller
         if ($request->hasFile('gambarObat')) {
             $image = $request->file('gambarObat');
             $image_name = time()."_".$image->getClientOriginalName();
-            $image->move(public_path('/img'), $image_name);
+            $image->move(public_path('img'), $image_name);
 
-            $path = '/img/' . $image_name;
+            $path = $image_name;
         }
 
 
@@ -195,7 +200,8 @@ class MedicinesController extends Controller
                 "name" => $p->generic_name . "(" . $p->form . ")",
                 "quantity" => 1,
                 "price" => $p->price,
-                "photo" => $p->image
+                "photo" => $p->urlGambar,
+                "idMedicine" => $p->id,
             ];
         } else {
             $cart[$id]['quantity']++;
@@ -207,5 +213,28 @@ class MedicinesController extends Controller
     public function checkout()
     {
         return view('frontend.checkout');
+    }
+
+    public function medicinesTerlaris()
+    {
+        //
+        $result = DB::table('medicines')
+            ->select('medicines.id', 'medicines.generic_name', 'medicines.price', 'medicines.form', 'medicines.restriction_formula', 
+            'medicines.description', 'medicines.faskes1', 'medicines.faskes2', 'medicines.faskes3', 'medicines.urlGambar', 
+            'medicines.category_id', DB::raw('SUM(inventory_transactionline.jumlah) as Quantity'))
+            ->join('inventory_transactionline','medicines.id','=','inventory_transactionline.medicines_id')
+            ->join('inventory_transaction','inventory_transactionline.inventory_transaction_id','=','inventory_transaction.id')
+            ->whereNotNull('inventory_transaction.transaction_id')
+            ->groupBy('medicines.id', 'medicines.generic_name', 'medicines.price', 'medicines.form', 'medicines.restriction_formula', 'medicines.description', 
+            'medicines.faskes1', 'medicines.faskes2', 'medicines.faskes3', 'medicines.urlGambar', 'medicines.category_id')
+            ->orderBy(DB::raw('SUM(inventory_transactionline.jumlah)'), 'DESC')
+            ->limit(5)
+            ->get();
+        $category = DB::table('categories')->get();
+
+        return view('report.medicinesTerlaris', [
+            'result' => $result,
+            'category' => $category,
+        ]);
     }
 }

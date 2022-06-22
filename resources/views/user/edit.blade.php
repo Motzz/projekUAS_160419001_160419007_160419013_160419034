@@ -47,9 +47,20 @@ Edit User
             </div>
             
             <div class="form-group">
-                <label for="title">Role</label>
-                <input required type="text" name="role" maxlength="255" class="form-control" 
-                value="{{old('role',$user->role)}}">
+                <label>Role</label>
+                <select class="form-control" name="role">
+                    <option value="">-pilih role-</option>
+                    @if($user->role == "admin")
+                    <option selected value="admin">Admin</option>
+                    <option value="buyer">Buyer</option>
+                    @elseif($user->role == "buyer")
+                    <option value="admin">Admin</option>
+                    <option selected value="buyer">Buyer</option>
+                    @else
+                    <option value="admin">Admin</option>
+                    <option value="buyer">Buyer</option>
+                    @endif
+                </select>
             </div>
 
         </div>

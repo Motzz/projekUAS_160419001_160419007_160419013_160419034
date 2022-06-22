@@ -5,7 +5,7 @@
   <h4 class="modal-title">{{$data->generic_name}} {{$data->form}}</h4>
 </div>
 <div class="modal-body">
-  <h2>Medicine detail</h2>
+  <h2>Medicines detail</h2>
   <table class="table">
       <thead>
         <tr>

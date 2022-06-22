@@ -1,5 +1,6 @@
 
 <div class="row">
+@if(Auth::check())
 <div class="col-lg-12 col-sm-12 col-12 main-section">
     <div class="dropdown">
         @if(session('cart'))
@@ -16,16 +17,18 @@
                 @endphp
             @endforeach
         @endif
-        <button type="button" class="btn btn-info" data-toggle="dropdown">
-        @if(Auth::user() != null)
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart 
-        @endif
-            <span class="badge badge-pill badge-danger">
-                @isset($totalBarang)
-                {{$totalBarang}}
-                @endisset
-            </span>
-        </button>
+        
+        
+            <button type="button" class="btn btn-info" data-toggle="dropdown">
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Cart 
+                <span class="badge badge-pill badge-danger">
+                    @isset($totalBarang)
+                    {{$totalBarang}}
+                    @endisset
+                </span>
+            </button>
+        
+            
         <div class="dropdown-menu">
 
             @if(session('cart'))
@@ -33,7 +36,7 @@
 
             <div class="row cart-detail">
                 <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
-                    <img height="50px" src="{{url('assets/images/'.$details['photo'])}}">
+                    <img height="50px" src="{{ asset('img/'.$details['photo']) }}" alt="">
                 </div>
                 <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
                     <p>{{$details['name']}}</p>
@@ -50,10 +53,13 @@
                         @endisset</span>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-6 total-section text-right">
-                    <p>Total: <span class="text-info">
+                    <p>Total: 
+                        <span class="text-info">
                             @isset($totalBarang)
-                            {{$totalBarang}}Rp.{{number_format($totalHarga,2)}}
-                            @endisset</span></p>
+                            Rp.{{number_format($totalHarga,2)}} <br>
+                            @endisset
+                        </span>
+                    </p>
                 </div>
             </div>
             <div class="row">
@@ -64,4 +70,5 @@
         </div>
     </div>
 </div>
+@endif
 </div>

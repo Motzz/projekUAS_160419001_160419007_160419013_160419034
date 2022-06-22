@@ -14,8 +14,8 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-<!-- Cart -->
-@include('layouts.cart')
+    <!-- Cart -->
+    @include('layouts.cart')
     <!-- /.Cart -->
 
       <li class="nav-item">
@@ -24,6 +24,12 @@
         </a>
       </li>
 
+      @if(!Auth::check())
+      <li class="nav-item">
+          <a class="btn btn-block btn-outline-info btn-sm" href="{{ route('login') }}">Login</a>
+      </li>
+      @endif
+      @if(Auth::check())
       <li class="nav-item">
         <a class="btn btn-block btn-outline-danger btn-sm" href="{{ route('logout')}}"
           onClick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -33,5 +39,7 @@
           @csrf
         </form>
       </li>
+      @endif
+      
     </ul>
   </nav>

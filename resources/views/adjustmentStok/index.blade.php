@@ -6,13 +6,13 @@
 @endif
 
 @section('judul')
-Medicine
+Adjustment Stock Medicine
 @endsection
 
 @section('pathjudul')
 <li class="breadcrumb-item"><a href="/home">Home</a></li>
-<li class="breadcrumb-item">Master</li>
-<li class="breadcrumb-item active">Medicine</li>
+<li class="breadcrumb-item">Medicine</li>
+<li class="breadcrumb-item active">Adjustment Stock</li>
 @endsection
 
 
@@ -22,8 +22,8 @@ Medicine
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Medicines </h3> 
-                    <a href="{{route('medicines.create')}}" class="btn btn-primary btn-responsive float-right">Tambah Medicines
+                    <h3 class="card-title">Adjustment Stock</h3> 
+                    <a href="{{route('adjustmentStok.create')}}" class="btn btn-primary btn-responsive float-right">Tambah Adjustment Stock
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
                         </svg>
@@ -34,38 +34,33 @@ Medicine
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                              <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">Nama</th>
-                              <th scope="col">Harga</th>
-                              <th scope="col">restriction formula</th>
-                              <th scope="col">description</th>
-                              <th scope="col">Foto</th>
-                              <th scope="col">Kategori</th>
-                              <th scope="col">Handle</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Tanggal pembuatan </th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Quantity Awal</th>
+                                <th scope="col">Quantity Baru</th>
+                                <th scope="col">Selisih</th>
+                                <th scope="col">Medicines</th>
+                                <th scope="col">Handle</th>
                             </tr>
                           </thead>
                         <tbody>
                              @foreach($result as $key => $d)            
                              <tr>
                                 <th>{{$d->id}}</th>
-                                <td>{{$d->generic_name}}</td>  
-                                <td>{{$d->price}}</td>
-                                <td>{{$d->restriction_formula}}</td>
+                                <td>{{$d->name}}</td>  
+                                <td>{{$d->tanggalDibuat}}</td>
                                 <td>{{$d->description}}</td>
-                                <td><img src="{{asset('/img/'.$d->urlGambar)}}" height="30px" alt=""></td>
-                                @foreach($kategori as $katego)
-                                    @if($katego->id==$d->category_id)
-                                    <td>{{$katego->name}}</td>
-                                    @endif
-                                @endforeach
-                                <td>
+                                <td>{{$d->QuantityAwal}}</td>
+                                <td>{{$d->QuantityBaru}}</td>
+                                <td>{{$d->Selisih}}</td>
+                                <td>{{$d->medicine->generic_name}}</td>
 
-                                <a class="btn btn-default bg-info" href="{{route('medicines.edit',[$d->id])}}">
+                                <td>
+                                <a class="btn btn-default bg-info" href="{{route('adjustmentStok.edit',[$d->id])}}">
                                         <i class="fas fa-edit"></i>
                                     </a> 
-
-                                 
-
                                      <button type="button" class="btn btn-default bg-danger" data-toggle="modal" data-target="#delete_{{$d->id}}">
                                      <i class="fas fa-trash"></i> 
                                     </button>
@@ -85,15 +80,15 @@ Medicine
                                         </div>
                                         
                                         <div class="modal-body">
-                                                Apakah anda yakin mau menghapus  "{{$d->generic_name}}"
+                                                Apakah anda yakin mau menghapus  "{{$d->name}}"
                                         </div>
                                     
                                         <div class="modal-footer justify-content-between">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Tidak</button>
-                                                <form action="{{route('medicines.destroy',[$d->id])}}" method="POST" class="btn btn-responsive">
+                                                <form action="{{route('adjustmentStok.destroy',[$d->id])}}" method="POST" class="btn btn-responsive">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button action="{{route('medicines.destroy',[$d->id])}}" class="btn btn-default bg-danger">
+                                                <button action="{{route('adjustmentStok.destroy',[$d->id])}}" class="btn btn-default bg-danger">
                                                     Hapus
                                                 </button>
                                                 @csrf
@@ -113,14 +108,15 @@ Medicine
                         </tbody>
                         <tfoot>
                             <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">Nama</th>
-                              <th scope="col">Harga</th>
-                              <th scope="col">restriction formula</th>
-                              <th scope="col">description</th>
-                              <th scope="col">Foto</th>
-                              <th scope="col">Kategori</th>
-                               <th scope="col">Handle</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Tanggal pembuatan </th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Quantity Awal</th>
+                                <th scope="col">Quantity Baru</th>
+                                <th scope="col">Selisih</th>
+                                <th scope="col">Medicines</th>
+                                <th scope="col">Handle</th>
                             </tr>
                         </tfoot>
                     </table>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Transaction;
+use App\InventoryTransaction;
 use App\Medicines;
 use App\Categories;
 use Illuminate\Http\Request;
@@ -19,9 +20,21 @@ class TransactionController extends Controller
     public function index()
     {
         //
-        $result = Transaction::orderBy('id', 'DESC')
-            ->orderBy('transaction_date', 'DESC')
-            ->get();
+        $user = Auth::user();
+
+        $result = null;
+        if($user->role == "buyer"){
+            $result = Transaction::where('user_id',$user->id)
+                ->orderBy('id', 'DESC')    
+                ->orderBy('transaction_date', 'DESC')
+                ->get();
+        }
+        else if($user->role == "admin"){
+            $result = Transaction::orderBy('id', 'DESC')
+                ->orderBy('transaction_date', 'DESC')
+                ->get();
+        }
+        
         return view('transaction.index', compact('result'));
     }
 
@@ -70,8 +83,9 @@ class TransactionController extends Controller
                     }
                 }
             }
-            if($totalCheckStock < $request->get('quantity')){
-                return redirect()->route('transaction.index')->with('status','Item yang dibeli tidak mencukupi jumlah stok');
+            if($totalCheckStock < $request->get('quantity')[$i]){
+                //return redirect()->route('/katalok')->with('status','Item yang dibeli tidak mencukupi jumlah stok');
+                 return redirect('/')->with('status','Item yang dibeli tidak mencukupi jumlah stok');
             }
         }
 
@@ -94,9 +108,17 @@ class TransactionController extends Controller
                     'price' => $request->get('price')[$i],
                     'transaction_id' => $dataNota->id,
                     'medicines_id' => $request->get('medicine')[$i],
-                    'totalprice	' => $request->get('quantity')[$i] * $request->get('price')[$i],
+                    'totalprice' => $request->get('quantity')[$i] * $request->get('price')[$i],
                 )
             );
+
+            DB::table('medicines')
+                ->where('id', $request->get('medicine')[$i])
+                ->update(array(
+                    'is_buy' => 1,
+                )
+            );  
+
             $totalHargaSeluruh = $totalHargaSeluruh + $request->get('quantity')[$i] * $request->get('price')[$i];
         }
         
@@ -111,37 +133,49 @@ class TransactionController extends Controller
         }
         */
 
-        $obatDipilih = Medicines::find($request->get('medicine'));
+        /*$obatDipilih = Medicines::find($request->get('medicine'));
         $obatDipilih->is_buy = 1;
         $obatDipilih->save();
 
         $notaDipilih = Transaction::find($dataNota->id);
         $notaDipilih->total = $totalHargaSeluruh;
         $notaDipilih->save();
+        */
+
+        DB::table('transaction')
+            ->where('id', $dataNota->id)
+            ->update(array(
+                'total' => $totalHargaSeluruh,
+            )
+        );
 
         $idtransaction = DB::table('inventory_transaction')->insertGetId(
             array(
                 'name' => 'NT/'. $year . '/' . $month . "/". $totalIndex,
-                'tanggalDibuat	' => date("Y-m-d"),
-                'transaction_id	' => $dataNota->id,
+                'tanggalDibuat' => date("Y-m-d"),
+                'transaction_id' => $dataNota->id,
                 'created_by' => $user->id,
-                'created_on	' => date("Y-m-d"),
-                'updated_by	' => $user->id,
-                'updated_on	' => date("Y-m-d"),
+                'created_on' => date("Y-m-d"),
+                'updated_by' => $user->id,
+                'updated_on' => date("Y-m-d"),
             )
         );
+
         for ($i = 0; $i < count($request->get('medicine')); $i++) {
             DB::table('inventory_transactionline')->insert(
                 array(
                     'inventory_transaction_id' => $idtransaction,
-                    'medicines_id	' => $request->get('medicine')[$i],
+                    'medicines_id' => $request->get('medicine')[$i],
                     'jumlah' => $request->get('quantity')[$i] * -1,
                 )
             );
             //$totalHargaSeluruh = $totalHargaSeluruh + $request->get('quantity')[$i] * $request->get('price')[$i];
         }
 
-        return redirect()->route('transaction.index')->with('status','Success!!');
+        $request->session()->forget('cart');
+        //return redirect()->route('/katalok')->with('status', "Berhasil membeli barang");
+        return redirect('/')->with('status','Berhasil membeli barang');
+
 
 
     }
@@ -194,5 +228,24 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         //
+    }
+
+
+    public function userTerbanyakBeli()
+    {
+        //
+        $result = DB::table('transaction')
+            ->select('transaction.user_id as userId', DB::raw('SUM(medicine_transaction.totalprice) as price'))
+            ->join('medicine_transaction','transaction.id','=','medicine_transaction.transaction_id')
+            ->groupBy('transaction.user_id')
+            ->orderBy(DB::raw('SUM(medicine_transaction.totalprice)'), 'DESC')
+            ->limit(3)
+            ->get();
+        $user = DB::table('users')->get();
+
+        return view('report.userTerbanyakBeli', [
+            'result' => $result,
+            'user' => $user,
+        ]);
     }
 }

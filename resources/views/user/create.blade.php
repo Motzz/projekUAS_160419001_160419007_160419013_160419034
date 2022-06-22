@@ -6,7 +6,7 @@
  </style>
 
 @section('judul')
-Tambah Menu
+Tambah User
 @endsection
 
 @section('pathjudul')
@@ -47,9 +47,9 @@ Tambah Menu
             <div class="form-group">
                         <label>Role</label>
                         <select class="form-control" name="id_role">
-                            <option>-pilih role-</option>
-                            <option>Admin</option>
-                            <option>Buyer</option>
+                            <option selected value="">-pilih role-</option>
+                            <option value="admin">Admin</option>
+                            <option value="buyer">Buyer</option>
                         </select>
             </div>
 

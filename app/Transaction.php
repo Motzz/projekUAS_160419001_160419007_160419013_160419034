@@ -22,4 +22,8 @@ class Transaction extends Model
         ->withPivot('id', 'quantity', 'price', 'totalprice');
     }
 
+    public function inventortTransaction()
+    {
+        return $this->hasMany('App\InventoryTransaction', 'transaction_id', 'id');
+    }
 }

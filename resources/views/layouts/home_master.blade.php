@@ -62,6 +62,8 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/frontend.css') }}">
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -84,7 +86,7 @@
     <!-- /.navbar -->
     
      <!-- Cart -->
-     @include('layouts.cart')
+  
     <!-- /.Cart -->
 
     <!-- Main Sidebar Container -->

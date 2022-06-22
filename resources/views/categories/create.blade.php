@@ -6,7 +6,7 @@
  </style>
 
 @section('judul')
-Tambah Menu
+Tambah Kategori Obat
 @endsection
 
 @section('pathjudul')

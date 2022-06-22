@@ -16,30 +16,23 @@
         <a href="#" class="d-block">
            @if(Auth::user())
                       {{Auth::user()->name}}
-                     @endif 
+                   
         </a>
       </div>
     </div>
 
     <!-- SidebarSearch Form -->
-    <div class="form-inline">
-      <div class="input-group" data-widget="sidebar-search">
-        <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="btn btn-sidebar">
-            <i class="fas fa-search fa-fw"></i>
-          </button>
-        </div>
-      </div>
-    </div>
+    
 
     <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-       
 
+        
+       
+ @if(Auth::user()->role == "admin")
         <li class="nav-header">REPORT</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
@@ -82,7 +75,61 @@
            
           </ul>
         </li>
-        <!-- END Permintaan-->
+        <!-- Start Pengaturan-->
+
+          <li class="nav-header">PENGATURAN STOK</li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p> Stok Barang 
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{route('stokAwal.index')}}" class="nav-link">
+                    <i class="nav-icon fas fa-columns"></i>
+                    <p>
+                      List Stok Barang
+                    </p>
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
+        </li>
+        <!-- END Pengaturan-->
+
+         <!-- Start Penyesuaian-->
+
+          <li class="nav-header">PENYESUAIAN STOK</li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p> Stok Barang 
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{route('adjustmentStok.index')}}" class="nav-link">
+                    <i class="nav-icon fas fa-columns"></i>
+                    <p>
+                      List PenyesuaianStok Barang
+                    </p>
+                  </a>
+                </li>
+
+                
+              </ul>
+            </li>
+
+         
+        </li>
+        <!-- END Penyesuaian-->
+
+        
 
         <li class="nav-header">MASTER</li>
        
@@ -139,9 +186,33 @@
               </ul>
         </li>
         <!--End Menu-->
+   @elseif(Auth::user()->role == "buyer")
 
+         <li class="nav-header">Riwayat Pembelian</li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p> Pembelian Barang 
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{" class="nav-link">
+                    <i class="nav-icon fas fa-columns"></i>
+                    <p>
+                      List Riwayat Pembelian Barang
+                    </p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+             
+        @endif
 
-
+  @endif 
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

@@ -28,8 +28,11 @@ Route::resource('categories', 'CategoriesController')->middleware('auth');
 Route::resource('medicines', 'MedicinesController')->middleware('auth');
 Route::get('/', 'MedicinesController@front_index');//check barang ae maen pengecekan auth di button invisible/!
 Route::get('add-to-cart/{id}','MedicinesController@addToCart');
-Route::get('checkout','MedicineController@checkout')->middleware('auth');
+Route::get('checkout','MedicinesController@checkout')->middleware('auth');
 
+
+Route::get('medicinesTerlaris','MedicinesController@medicinesTerlaris')->middleware('auth');
+Route::get('userTerbanyakBeli','TransactionController@userTerbanyakBeli')->middleware('auth');
 
 Route::resource('users', 'UserController')->middleware('auth');
 Route::resource('stokAwal', 'StokAwalController')->middleware('auth');

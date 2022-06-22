@@ -58,10 +58,11 @@ class StokAwalController extends Controller
 
         $dataNota = new StokAwal();
         $dataNota->name = 'SA/' . $year . '/' . $month . "/" . $totalIndex;
-        $dataNota->tanggalDibuat = date("Y-m-d");
-        $dataNota->jumlah =  $request->get('jumlah');
-        $dataNota->description = $request->get('description');
-        $dataNota->medicines_id = $request->get('medicine');
+        $dataNota->tanggalDibuat = date("Y-m-d"); //ini di html readonly diseting tanggal skrg kusus di store aja kalo edit ambil dri db   1  
+        $dataNota->jumlah =  $request->get('jumlah'); //ini di html dibuat numbe
+         
+        $dataNota->description = $request->get('description'); //ini di html dibuat textbox    4 
+        $dataNota->medicines_id = $request->get('medicine'); //ini di html dibuat combobox    2 
         $dataNota->created_by = $user->id;
         $dataNota->created_on = date("Y-m-d h:i:s");
         $dataNota->updated_by = $user->id;
@@ -76,18 +77,18 @@ class StokAwalController extends Controller
         $idtransaction = DB::table('inventory_transaction')->insertGetId(
             array(
                 'name' => 'SA/' . $year . '/' . $month . "/" . $totalIndex,
-                'tanggalDibuat	' => date("Y-m-d"),
-                'stock_awal_id	' => $dataNota->id,
+                'tanggalDibuat' => date("Y-m-d"),
+                'stock_awal_id' => $dataNota->id,
                 'created_by' => $user->id,
-                'created_on	' => date("Y-m-d"),
-                'updated_by	' => $user->id,
-                'updated_on	' => date("Y-m-d"),
+                'created_on' => date("Y-m-d"),
+                'updated_by' => $user->id,
+                'updated_on' => date("Y-m-d"),
             )
         );
         DB::table('inventory_transactionline')->insert(
             array(
                 'inventory_transaction_id' => $idtransaction,
-                'medicines_id	' => $request->get('medicine'),
+                'medicines_id' => $request->get('medicine'),
                 'jumlah' => $request->get('quantity'),
             )
         );
@@ -120,7 +121,6 @@ class StokAwalController extends Controller
     {
         //
         $medicine = Medicines::where('is_entry', 0)
-            ->orWhere('id', $stokAwal->medicines_id)
             ->get();
         $category = Categories::all();
         return view('stokAwal.edit', compact('medicine', 'category', 'stokAwal'));

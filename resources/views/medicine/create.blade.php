@@ -7,13 +7,13 @@
  </style>
 
 @section('judul')
-Tambah Pulau
+Tambah Medicines
 @endsection
 
 @section('pathjudul')
 <li class="breadcrumb-item"><a href="/home">Home</a></li>
 <li class="breadcrumb-item">Master</li>
-<li class="breadcrumb-item"><a href="{{route('medicines.index')}}">medicine</a></li>
+<li class="breadcrumb-item"><a href="{{route('medicines.index')}}">Medecine</a></li>
 <li class="breadcrumb-item active">Tambah</li>
 @endsection
 
