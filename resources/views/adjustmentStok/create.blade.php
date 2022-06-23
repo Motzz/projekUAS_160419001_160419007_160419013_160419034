@@ -44,7 +44,7 @@ Tambah Adjustment Stock
 
             <div class="form-group">
                 <label for="title">Jumlah Stok Barang Awal</label>
-                <input readonly type="number" min="0" id="stokAwalBarang" name="QuantityAwal" class="form-control" value="{{old('QuantityAwal','')}}">
+                <input required readonly type="number" min="0" id="stokAwalBarang" name="QuantityAwal" class="form-control" value="{{old('QuantityAwal','')}}">
             </div>
 
             <div class="form-group">
