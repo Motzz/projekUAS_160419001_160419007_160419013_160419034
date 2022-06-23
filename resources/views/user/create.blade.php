@@ -46,7 +46,7 @@ Tambah User
             
             <div class="form-group">
                         <label>Role</label>
-                        <select class="form-control" name="id_role">
+                        <select class="form-control" name="role">
                             <option selected value="">-pilih role-</option>
                             <option value="admin">Admin</option>
                             <option value="buyer">Buyer</option>

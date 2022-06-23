@@ -20,9 +20,16 @@ class UserController extends Controller
         //
         $data = DB::table('users')
             ->get();
-        return view('user.index', [
-            'data' => $data,
-        ]);
+
+        $useras = Auth::user();
+        if($useras->role == "admin"){
+            return view('user.index', [
+                'data' => $data,
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+        
     }
 
     /**
@@ -33,7 +40,13 @@ class UserController extends Controller
     public function create()
     {
         //
-        return view('user.create');
+        $useras = Auth::user();
+        if($useras->role == "admin"){
+            return view('user.create');
+
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -58,7 +71,7 @@ class UserController extends Controller
                     'updated_at' => date("Y-m-d h:i:s"),
                 )
         );
-        return redirect()->route('user.index')->with('status','Success!!');
+        return redirect()->route('users.index')->with('status','Success!!');
 
     }
 
@@ -71,9 +84,15 @@ class UserController extends Controller
     public function show(User $user)
     {
         //
-        return view('user.edit', [
-            'user' => $user,
-        ]);
+        $useras = Auth::user();
+        if($useras->role == "admin"){
+            return view('user.edit', [
+                'user' => $user,
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+        
     }
 
     /**
@@ -85,9 +104,15 @@ class UserController extends Controller
     public function edit(User $user)
     {
         //
-        return view('user.edit', [
-            'user' => $user,
-        ]);
+        $useras = Auth::user();
+        if($useras->role == "admin"){
+            return view('user.edit', [
+                'user' => $user,
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+        
     }
 
     /**

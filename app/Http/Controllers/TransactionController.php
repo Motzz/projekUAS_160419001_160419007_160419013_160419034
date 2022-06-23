@@ -34,8 +34,13 @@ class TransactionController extends Controller
                 ->orderBy('transaction_date', 'DESC')
                 ->get();
         }
+
+        if($user->role == "admin" || $user->role == "buyer"){
+            return view('transaction.index', compact('result'));
+        }else{
+            return redirect('/')->with('status','Harap melakukan login terlebih dahulu');
+        }
         
-        return view('transaction.index', compact('result'));
     }
 
     /**
@@ -49,7 +54,13 @@ class TransactionController extends Controller
         $medicine = Medicines::where('is_entry', 1)
             ->get();
         $category = Categories::all();
-        return view('transaction.create', compact('medicine', 'category'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('transaction.create', compact('medicine', 'category'));
+        }else{
+            return redirect()->route('stokAwal.index')->with('status', 'Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -74,15 +85,26 @@ class TransactionController extends Controller
         //checkstock barang
         $medicineCheckStock = Medicines::where('is_entry', 1)
             ->get();
+
+        $dataReport = DB::table('inventory_transactionline') //dibuat untuk check barang di gudang tersebut apaan yang perlu dibeneri stok nya
+            ->select('inventory_transactionline.medicines_id',"inventory_transactionline.jumlah")
+            ->get();
+
         for ($i = 0; $i < count($request->get('medicine')); $i++) {
             $totalCheckStock=0;
-            foreach($medicineCheckStock as $m){
-                if($medicineCheckStock->id == $request->get('medicine')[$i]){
-                    foreach($medicineCheckStock->inventoryTransaction as $c){
+            foreach($dataReport as $dr){
+                if($dr->medicines_id == $request->get('medicine')[$i]){
+                    $totalCheckStock += $dr->jumlah;
+                }    
+            }
+            /*foreach($medicineCheckStock as $m){
+                
+                if($m->id == $request->get('medicine')[$i]){
+                    foreach($m->inventoryTransaction as $c){
                         $totalCheckStock += $c->jumlah;
                     }
                 }
-            }
+            }*/
             if($totalCheckStock < $request->get('quantity')[$i]){
                 //return redirect()->route('/katalok')->with('status','Item yang dibeli tidak mencukupi jumlah stok');
                  return redirect('/')->with('status','Item yang dibeli tidak mencukupi jumlah stok');
@@ -192,8 +214,28 @@ class TransactionController extends Controller
         $medicine = Medicines::where('is_entry', 1)
             ->get();
         $category = Categories::all();
-        $user = Auth::user();
-        return view('transaction.create', compact('medicine', 'category', 'transaction','user'));
+
+        $trans = DB::table('transaction')
+            ->where('id', $transaction->id)
+            ->get();
+//dd($trans);
+        $medecineTransaction = DB::table('medicine_transaction')
+            ->select('medicine_transaction.transaction_id','medicine_transaction.id','medicine_transaction.quantity','medicine_transaction.price','medicine_transaction.totalprice',
+            'medicines.generic_name', 'medicines.urlGambar','medicines.form','categories.name')
+            ->join('medicines','medicines.id','=','medicine_transaction.medicines_id')
+            ->join('categories','medicines.category_id','=','categories.id')
+            ->get();
+            
+        $user = DB::table('users')->get();
+
+
+        $useras = Auth::user();
+        if($useras->role == "admin" || $useras->role == "buyer"){
+            return view('transaction.detail', compact('medicine', 'category', 'transaction','user','medecineTransaction', 'trans'));
+
+        }else{
+            return redirect('/')->with('status','Harap melakukan login terlebih dahulu');
+        }
     }
 
     /**
@@ -243,9 +285,16 @@ class TransactionController extends Controller
             ->get();
         $user = DB::table('users')->get();
 
-        return view('report.userTerbanyakBeli', [
-            'result' => $result,
-            'user' => $user,
-        ]);
+        $useras = Auth::user();
+        if($useras->role == "admin"){
+            return view('report.userTerbanyakBeli', [
+                'result' => $result,
+                'user' => $user,
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+
+        
     }
 }

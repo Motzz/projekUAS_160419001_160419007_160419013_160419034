@@ -34,7 +34,7 @@ Tambah Adjustment Stock
 
             <div class="form-group">
                 <label for="title">Medicines</label>
-                <select required class="form-control select2" style="width: 100%;" name="medicine">
+                <select required class="form-control select2" style="width: 100%;" name="medicine" id="medicine">
                     <option value="">--Pilih Medicine--</option>
                     @foreach($medicine as $key => $data)
                     <option value="{{$data->id}}"{{$data->generic_name == $data->id? 'selected' :'' }}>{{$data->generic_name}}<nbsp>({{$data->form}})</option>
@@ -54,7 +54,7 @@ Tambah Adjustment Stock
 
             <div class="form-group">
                     <label for="title">Deskripsi</label>
-                    <input required type="text" name="keterangan" class="form-control" value="{{old('keterangan','')}}" maxlength="500">
+                    <input required type="text" name="description" class="form-control" value="{{old('keterangan','')}}" maxlength="500">
                 </div>
                     
         </div>
@@ -68,27 +68,27 @@ Tambah Adjustment Stock
 
 <script>
     $(document).ready(function() {
-        $("#medicine").on("change", function() {
-            var id = this.value;
-            if (id == "pilih" || id == "") {
-                $("#stokAwalBarang").val("");
+       
+       $("#medicine").on("change", function() {
+           var id = this.value;
+           if (id == "pilih" || id == "") {
+               $("#stokAwalBarang").val("");
 
-            } else {
-                var total = 0;
+           } else {
+               var total = 0;
 
-                var dataReport = <?php echo json_encode($medicine); ?>;            
+               var dataReport = <?php echo json_encode($dataReport); ?>;            
 
-                $.each(dataReport, function(key, value) {
-                    if (value.id.toString() == id.toString()) {
-                        $.each(value.inventoryTransaction, function(k, v) {
-                            total = total + parseFloat(value.jumlah);
-                        });
-                    }
-                });
-                $("#stokAwalBarang").val(total);
-            }
+               $.each(dataReport, function(key, value) {
+                   if (value.medicines_id.toString() == id.toString()) {                    
+                       total += parseFloat(value.jumlah);
+                   }
+               });
+               $("#stokAwalBarang").val(total);
+           }   
 
-        });
-    });
+       });
+  
+   });
 </script>
 @endsection

@@ -15,7 +15,7 @@ class AdjustmentStok extends Model
         return $this->belongsTo('App\Medicines','medicines_id');
     }
 
-    public function inventortTransaction()
+    public function inventoryTransaction()
     {
         return $this->hasMany('App\InventoryTransaction', 'adjustment_stock_id', 'id');
     }

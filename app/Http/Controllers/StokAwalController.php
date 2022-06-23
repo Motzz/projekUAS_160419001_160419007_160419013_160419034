@@ -20,7 +20,13 @@ class StokAwalController extends Controller
     {
         //
         $result = StokAwal::all();
-        return view('stokAwal.index', compact('result'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('stokAwal.index', compact('result'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -34,7 +40,13 @@ class StokAwalController extends Controller
         $medicine = Medicines::where('is_entry', 0)
             ->get();
         $category = Categories::all();
-        return view('stokAwal.create', compact('medicine', 'category'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('stokAwal.create', compact('medicine', 'category'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -89,7 +101,7 @@ class StokAwalController extends Controller
             array(
                 'inventory_transaction_id' => $idtransaction,
                 'medicines_id' => $request->get('medicine'),
-                'jumlah' => $request->get('quantity'),
+                'jumlah' => $request->get('jumlah'), 
             )
         );
         return redirect()->route('stokAwal.index')->with('status', 'Success!!');
@@ -108,7 +120,13 @@ class StokAwalController extends Controller
             ->orWhere('id', $stokAwal->medicines_id)
             ->get();
         $category = Categories::all();
-        return view('stokAwal.show', compact('medicine', 'category', 'stokAwal'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('stokAwal.show', compact('medicine', 'category', 'stokAwal'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -123,7 +141,13 @@ class StokAwalController extends Controller
         $medicine = Medicines::where('is_entry', 0)
             ->get();
         $category = Categories::all();
-        return view('stokAwal.edit', compact('medicine', 'category', 'stokAwal'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('stokAwal.edit', compact('medicine', 'category', 'stokAwal'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -160,7 +184,7 @@ class StokAwalController extends Controller
             ->update(
                 array(
                     'medicines_id' => $request->get('medicine'),
-                    'jumlah' => $request->get('quantity'),
+                    'jumlah' => $request->get('jumlah'),
                 )
             );
 

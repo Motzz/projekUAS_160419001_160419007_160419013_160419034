@@ -52,7 +52,7 @@ Medicine
                                 <td>{{$d->price}}</td>
                                 <td>{{$d->restriction_formula}}</td>
                                 <td>{{$d->description}}</td>
-                                <td><img src="{{asset('/img/'.$d->urlGambar)}}" height="30px" alt=""></td>
+                                <td><img src="{{asset('/img/'.$d->urlGambar)}}" height="50px" alt=""></td>
                                 @foreach($kategori as $katego)
                                     @if($katego->id==$d->category_id)
                                     <td>{{$katego->name}}</td>

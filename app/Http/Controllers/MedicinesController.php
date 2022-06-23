@@ -24,10 +24,16 @@ class MedicinesController extends Controller
         //return view('medicine.index', compact('result'));
 
         //parameter
-        return view('medicine.index', [
-            'result' => $result,
-            'kategori'=>$kategori
-        ]);
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('medicine.index', [
+                'result' => $result,
+                'kategori'=>$kategori
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+        
     }
 
     /**
@@ -38,10 +44,17 @@ class MedicinesController extends Controller
     public function create()
     {
         //
+        
         $kategori=Categories::all();
-          return view('medicine.create', [
-            'kategori' => $kategori
-        ]);
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('medicine.create', [
+                'kategori' => $kategori
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+          
 
     }
 
@@ -103,7 +116,13 @@ class MedicinesController extends Controller
     public function show(Medicines $medicines)
     {
         $data=$medicines;
-        return view('medicine.show',compact('data'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('medicine.show',compact('data'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -117,10 +136,17 @@ class MedicinesController extends Controller
         //
         $kategori=Categories::all();
        // dd($medicine);
-          return view('medicine.edit', [
-            'medicines'=>$medicine,
-            'kategori' => $kategori
-        ]);
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('medicine.edit', [
+                'medicines'=>$medicine,
+                'kategori' => $kategori
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+          
     }
 
     /**
@@ -173,22 +199,42 @@ class MedicinesController extends Controller
      * @param  \App\Medicines  $medicines
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Medicines $medicines)
+    public function destroy(Medicines $medicine)
     {
         //
-        if($medicines->is_buy == 0){
-            $medicines->delete();
-            return redirect()->route('medicine.index')->with('status','Delete Success!!');  
+        
+        if($medicine->is_buy == 0){
+             //DB::table('medicines')->where('ItemTypeID', $itemType['ItemTypeID'])->delete();
+            //$medicines->delete();
+            DB::table('medicines')->where('id', $medicine->id)->delete();
+            return redirect()->route('medicines.index')->with('status','Delete Success!!');  
         }
         else{
-            return redirect()->route('medicine.index')->with('status','Delete Failed!!');  
+            return redirect()->route('medicines.index')->with('status','Delete Failed!!');  
         }
     }
 
     public function front_index()
     {
         $medicines = Medicines::all();
-        return view('frontend.product', compact('medicines'));
+        $user = Auth::user();
+        $kategor=Categories::all();
+
+        $dataReport = DB::table('inventory_transactionline') //dibuat untuk check barang di gudang tersebut apaan yang perlu dibeneri stok nya
+            ->select('inventory_transactionline.medicines_id',"inventory_transactionline.jumlah")
+            ->get();
+
+        if(Auth::check()){
+            if($user->role == "buyer"){
+                return view('frontend.product', compact('medicines', 'dataReport','kategor'));
+            }else{
+                return redirect()->route('medicines.index')->with('status','Tidak dapat mengakses halaman Buyer');
+            }
+        }
+        else{
+            return view('frontend.product', compact('medicines','dataReport','kategor'));
+        }
+        
     }
 
     public function addToCart($id)
@@ -202,6 +248,7 @@ class MedicinesController extends Controller
                 "price" => $p->price,
                 "photo" => $p->urlGambar,
                 "idMedicine" => $p->id,
+                "hapus" => 0,
             ];
         } else {
             $cart[$id]['quantity']++;
@@ -209,10 +256,32 @@ class MedicinesController extends Controller
         session()->put('cart', $cart);
         return redirect()->back()->with('success', 'Product ' . $cart[$id]['name'] . " jumlah " . $cart[$id]['quantity']);
     }
+    public function minToCart($id)
+    {
+        $p = Medicines::find($id);
+        $cart = session()->get('cart');
+        if (isset($cart[$id])) {
+            if($cart[$id]['quantity'] == 1){
+                $cart[$id]['quantity']--;
+                $cart[$id]['hapus'] = 1;
+            }
+            else{
+                $cart[$id]['quantity']--;
+                $cart[$id]['hapus'] = 0;
+            }
+        } 
+        session()->put('cart', $cart);
+        return redirect()->back()->with('success', 'Product ' . $cart[$id]['name'] . " jumlah " . $cart[$id]['quantity']);
+    }
 
     public function checkout()
     {
-        return view('frontend.checkout');
+        $user = Auth::user();
+        if($user->role == "buyer"){
+            return view('frontend.checkout'); 
+        }else{
+            return redirect()->route('medicines.index')->with('status','Tidak dapat mengakses halaman Buyer');
+        }
     }
 
     public function medicinesTerlaris()
@@ -227,14 +296,20 @@ class MedicinesController extends Controller
             ->whereNotNull('inventory_transaction.transaction_id')
             ->groupBy('medicines.id', 'medicines.generic_name', 'medicines.price', 'medicines.form', 'medicines.restriction_formula', 'medicines.description', 
             'medicines.faskes1', 'medicines.faskes2', 'medicines.faskes3', 'medicines.urlGambar', 'medicines.category_id')
-            ->orderBy(DB::raw('SUM(inventory_transactionline.jumlah)'), 'DESC')
+            ->orderByRaw('SUM(inventory_transactionline.jumlah) ASC')
             ->limit(5)
             ->get();
+        //dd($result);
         $category = DB::table('categories')->get();
 
-        return view('report.medicinesTerlaris', [
-            'result' => $result,
-            'category' => $category,
-        ]);
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('report.medicinesTerlaris', [
+                'result' => $result,
+                'category' => $category,
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 }

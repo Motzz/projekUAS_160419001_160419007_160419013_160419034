@@ -19,10 +19,10 @@ class Transaction extends Model
     public function medicines()
     {
         return $this->belongsToMany('App\Medicines', 'medicine_transaction', 'transaction_id', 'medicines_id')
-        ->withPivot('id', 'quantity', 'price', 'totalprice');
+            ->withPivot('id', 'quantity', 'price', 'totalprice');
     }
 
-    public function inventortTransaction()
+    public function inventoryTransaction()
     {
         return $this->hasMany('App\InventoryTransaction', 'transaction_id', 'id');
     }

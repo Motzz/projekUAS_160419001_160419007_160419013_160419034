@@ -2,7 +2,7 @@
   <!-- Brand Logo -->
   <a href="/home" class="brand-link">
     <img src="{{asset('assets/dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-    <span class="brand-text font-weight-light">NeeDed</span>
+    <span class="brand-text font-weight-light">Apotiku</span>
   </a>
 
   <!-- Sidebar -->
@@ -43,7 +43,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{" class="nav-link">
+              <a href="{{url('/medicinesTerlaris')}}" class="nav-link">
                 <i class="nav-icon fas fa-columns"></i>
                 <p>
                   Obat Terlaris
@@ -64,7 +64,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="" class="nav-link">
+              <a href="{{url('/userTerbanyakBeli')}}" class="nav-link">
                 <i class="nav-icon fas fa-columns"></i>
                 <p>
                   Customer Teraktif
@@ -75,13 +75,38 @@
            
           </ul>
         </li>
+         <!-- Start Pengaturan-->
+
+          <li class="nav-header">RIWAYAT</li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p> Pembelian
+                  <i class="fas fa-angle-left right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="{{route('transaction.index')}}" class="nav-link">
+                    <i class="nav-icon fas fa-columns"></i>
+                    <p>
+                       Pembelian Semua Customer
+                    </p>
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
+        </li>
+        <!-- END Pengaturan-->
         <!-- Start Pengaturan-->
 
           <li class="nav-header">PENGATURAN STOK</li>
             <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-table"></i>
-                <p> Stok Barang 
+                <p> Stok Awal Barang 
                   <i class="fas fa-angle-left right"></i>
                 </p>
               </a>
@@ -90,7 +115,7 @@
                   <a href="{{route('stokAwal.index')}}" class="nav-link">
                     <i class="nav-icon fas fa-columns"></i>
                     <p>
-                      List Stok Barang
+                      List Stok Awal Barang
                     </p>
                   </a>
                 </li>
@@ -187,28 +212,51 @@
         </li>
         <!--End Menu-->
    @elseif(Auth::user()->role == "buyer")
-
-         <li class="nav-header">Riwayat Pembelian</li>
+    <li class="nav-header">-</li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-table"></i>
+            <p>  Pembelian Barang  
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-table"></i>
-                <p> Pembelian Barang 
-                  <i class="fas fa-angle-left right"></i>
+              <a href="{{route('transaction.index')}}" class="nav-link">
+                <i class="nav-icon fas fa-columns"></i>
+                <p>
+                   List Riwayat Pembelian Barang
                 </p>
               </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="{" class="nav-link">
-                    <i class="nav-icon fas fa-columns"></i>
-                    <p>
-                      List Riwayat Pembelian Barang
-                    </p>
-                  </a>
-                </li>
-              </ul>
             </li>
+
+           
           </ul>
         </li>
+
+          <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-table"></i>
+            <p>Katalog Obat
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{{url('/')}}" class="nav-link">
+                <i class="nav-icon fas fa-columns"></i>
+                <p>
+                  List-Obat
+                </p>
+              </a>
+            </li>
+
+           
+          </ul>
+        </li>
+
+        
+        
              
         @endif
 

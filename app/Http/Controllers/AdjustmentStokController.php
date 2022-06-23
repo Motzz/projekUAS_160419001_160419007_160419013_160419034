@@ -20,7 +20,13 @@ class AdjustmentStokController extends Controller
     {
         //
         $result = AdjustmentStok::all();
-        return view('adjustmentStok.index', compact('result'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('adjustmentStok.index', compact('result'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -34,7 +40,24 @@ class AdjustmentStokController extends Controller
         $medicine = Medicines::where('is_entry', 1)
             ->get();
         $category = Categories::all();
-        return view('adjustmentStok.create', compact('medicine', 'category'));
+
+        /*$dataReport = DB::table('inventory_transactionline') //dibuat untuk check barang di gudang tersebut apaan yang perlu dibeneri stok nya
+            ->select(
+                'inventory_transactionline.medicines_id',DB::raw("sum(inventory_transactionline.jumlah) as totalQuantity")
+            )
+            ->groupBy('inventory_transactionline.medicines_id')
+            ->get();*/
+        $dataReport = DB::table('inventory_transactionline') //dibuat untuk check barang di gudang tersebut apaan yang perlu dibeneri stok nya
+            ->select('inventory_transactionline.medicines_id',"inventory_transactionline.jumlah")
+            ->get();
+
+            
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('adjustmentStok.create', compact('medicine', 'category','dataReport'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -58,7 +81,7 @@ class AdjustmentStokController extends Controller
 
         $dataNota = new AdjustmentStok();
         $dataNota->name = 'PS/' . $year . '/' . $month . "/" . $totalIndex;
-        $dataNota->tanggalDibuat = date("Y-m-d");
+        $dataNota->tanggalDibuat = date("Y-m-d");//apo
         $dataNota->description = $request->get('description');
         $dataNota->QuantityAwal =  $request->get('QuantityAwal');
         $dataNota->QuantityBaru = $request->get('QuantityBaru');
@@ -74,18 +97,18 @@ class AdjustmentStokController extends Controller
         $idtransaction = DB::table('inventory_transaction')->insertGetId(
             array(
                 'name' => 'PS/' . $year . '/' . $month . "/" . $totalIndex,
-                'tanggalDibuat	' => date("Y-m-d"),
+                'tanggalDibuat' => date("Y-m-d"),
                 'adjustment_stock_id' => $dataNota->id,
                 'created_by' => $user->id,
-                'created_on	' => date("Y-m-d"),
-                'updated_by	' => $user->id,
-                'updated_on	' => date("Y-m-d"),
+                'created_on' => date("Y-m-d"),
+                'updated_by' => $user->id,
+                'updated_on' => date("Y-m-d"),
             )
         );
         DB::table('inventory_transactionline')->insert(
             array(
                 'inventory_transaction_id' => $idtransaction,
-                'medicines_id	' => $request->get('medicine'),
+                'medicines_id' => $request->get('medicine'),
                 'jumlah' => $request->get('QuantityBaru') - $request->get('QuantityAwal'),
             )
         );
@@ -104,7 +127,13 @@ class AdjustmentStokController extends Controller
         $medicine = Medicines::where('is_entry', 1)
             ->get();
         $category = Categories::all();
-        return view('adjustmentStok.show', compact('medicine', 'category','AdjustmentStok'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('adjustmentStok.show', compact('medicine', 'category','AdjustmentStok'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -113,13 +142,28 @@ class AdjustmentStokController extends Controller
      * @param  \App\AdjustmentStok  $AdjustmentStok
      * @return \Illuminate\Http\Response
      */
-    public function edit(AdjustmentStok $AdjustmentStok)
+    public function edit(AdjustmentStok $adjustmentStok)
     {
         //
         $medicine = Medicines::where('is_entry', 1)
             ->get();
         $category = Categories::all();
-        return view('adjustmentStok.edit', compact('medicine', 'category','AdjustmentStok'));
+
+        $dataReport = DB::table('inventory_transactionline') //dibuat untuk check barang di gudang tersebut apaan yang perlu dibeneri stok nya
+            ->select(
+                'inventory_transactionline.medicines_id',"inventory_transactionline.jumlah"
+            )
+            ->join('inventory_transaction', 'inventory_transactionline.inventory_transaction_id', '=', 'inventory_transaction.id')
+            ->where('inventory_transaction.adjustment_stock_id','!=', $adjustmentStok->id)
+            ->get();
+
+        //dd($dataReport);
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('adjustmentStok.edit', compact('medicine', 'category','adjustmentStok', 'dataReport'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -129,26 +173,26 @@ class AdjustmentStokController extends Controller
      * @param  \App\AdjustmentStok  $AdjustmentStok
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, AdjustmentStok $AdjustmentStok)
+    public function update(Request $request, AdjustmentStok $adjustmentStok)
     {
         //
         $user = Auth::user();
 
-        $AdjustmentStok->description = $request->get('description');
-        $AdjustmentStok->QuantityAwal =  $request->get('QuantityAwal');
-        $AdjustmentStok->QuantityBaru = $request->get('QuantityBaru');
-        $AdjustmentStok->Selisih = $request->get('QuantityBaru') - $request->get('QuantityAwal');
-        $AdjustmentStok->medicines_id = $request->get('medicine');
-        $AdjustmentStok->updated_by = $user->id;
-        $AdjustmentStok->updated_on = date("Y-m-d h:i:s");
-        $AdjustmentStok->save();
+        $adjustmentStok->description = $request->get('description');
+        $adjustmentStok->QuantityAwal =  $request->get('QuantityAwal');
+        $adjustmentStok->QuantityBaru = $request->get('QuantityBaru');
+        $adjustmentStok->Selisih = $request->get('QuantityBaru') - $request->get('QuantityAwal');
+        $adjustmentStok->medicines_id = $request->get('medicine');
+        $adjustmentStok->updated_by = $user->id;
+        $adjustmentStok->updated_on = date("Y-m-d h:i:s");
+        $adjustmentStok->save();
 
-        $idIIT = DB::table('ItemInventoryTransaction')->select('id')->where('adjustment_stock_id', $AdjustmentStok->id)->get();
+        $idIIT = DB::table('inventory_transaction')->select('id')->where('adjustment_stock_id', $adjustmentStok->id)->get();
         DB::table('inventory_transactionline')
             ->where('inventory_transaction_id', $idIIT[0]->id)
             ->update(
                 array(
-                    'medicines_id	' => $request->get('medicine'),
+                    'medicines_id' => $request->get('medicine'),
                     'jumlah' => $request->get('quantity'),
                 )
             );
@@ -162,19 +206,19 @@ class AdjustmentStokController extends Controller
      * @param  \App\AdjustmentStok  $AdjustmentStok
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AdjustmentStok $AdjustmentStok)
+    public function destroy(AdjustmentStok $adjustmentStok)
     {
         //
         $user = Auth::user();
-        $idIIT = DB::table('ItemInventoryTransaction')->select('id')->where('adjustment_stock_id', $AdjustmentStok->id)->get();
-        DB::table('ItemInventoryTransaction')
-            ->where('adjustment_stock_id', $AdjustmentStok->id)
+        $idIIT = DB::table('inventory_transaction')->select('id')->where('adjustment_stock_id', $adjustmentStok->id)->get();
+        DB::table('inventory_transaction')
+            ->where('adjustment_stock_id', $adjustmentStok->id)
             ->delete();
 
-        DB::table('ItemInventoryTransactionLine')
+        DB::table('inventory_transactionline')
             ->where('inventory_transaction_id', $idIIT[0]->id)
             ->delete();
 
-        $AdjustmentStok->delete();
+        $adjustmentStok->delete();
     }
 }

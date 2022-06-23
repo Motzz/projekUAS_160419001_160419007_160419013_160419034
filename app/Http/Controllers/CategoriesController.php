@@ -18,7 +18,13 @@ class CategoriesController extends Controller
     {
         //
         $result = Categories::all();
-        return view('categories.index', compact('result'));
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('categories.index', compact('result'));
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     public function showList($id_category)
@@ -42,7 +48,13 @@ class CategoriesController extends Controller
     public function create()
     {
         //
-        return view('categories.create');
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('categories.create');
+
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
     }
 
     /**
@@ -95,10 +107,17 @@ class CategoriesController extends Controller
         $result = $data->medicines;
         if ($result) $getTotalData = $result->count();
         else $getTotalData = 0;
-        return view(
-            'report.list_medicines_by_category',
-            compact('id_category', 'namecategory', 'result', 'getTotalData')
-        );
+
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view(
+                'report.list_medicines_by_category',
+                compact('id_category', 'namecategory', 'result', 'getTotalData')
+            );
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+        
     }
 
     /**
@@ -110,9 +129,15 @@ class CategoriesController extends Controller
     public function edit(Categories $category)
     {
         //
-        return view('categories.edit', [
-            'categories' => $category
-        ]);
+        $user = Auth::user();
+        if($user->role == "admin"){
+            return view('categories.edit', [
+                'categories' => $category
+            ]);
+        }else{
+            return redirect('/')->with('status','Tidak dapat mengakses halaman Admin');
+        }
+        
     }
 
     /**

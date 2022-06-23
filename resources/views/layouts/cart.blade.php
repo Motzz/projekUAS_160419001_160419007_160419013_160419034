@@ -11,10 +11,14 @@
 
 
             @foreach(session('cart') as $id=>$details)
+            @if(isset($details['hapus']))
+            @if($details['hapus'] == 0)
                 @php
                 $totalHarga += $details['price'] * $details['quantity'];
                 $totalBarang += 1;
                 @endphp
+            @endif
+            @endif
             @endforeach
         @endif
         
@@ -32,18 +36,25 @@
         <div class="dropdown-menu">
 
             @if(session('cart'))
-            @foreach(session('cart') as $id=>$details)
-
-            <div class="row cart-detail">
-                <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
-                    <img height="50px" src="{{ asset('img/'.$details['photo']) }}" alt="">
-                </div>
-                <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
-                    <p>{{$details['name']}}</p>
-                    <span class="price text-info"> Rp.{{number_format($details['price'],2)}}</span> <span class="count"> Quantity:{{$details['quantity']}}</span>
-                </div>
-            </div>
-            @endforeach
+                @foreach(session('cart') as $id=>$details)
+                    @if(isset($details['hapus']))
+                        @if($details['hapus'] == 0)
+                        <div class="row cart-detail">
+                            <div class="col-lg-4 col-sm-4 col-4 cart-detail-img">
+                                <img height="50px" src="{{ asset('img/'.$details['photo']) }}" alt="">
+                            </div>
+                            <div class="col-lg-8 col-sm-8 col-8 cart-detail-product">
+                                <p>{{$details['name']}}</p>
+                                <span class="price text-info"> Rp.{{number_format($details['price'],2)}}</span> <span class="count"> Quantity:{{$details['quantity']}}</span>
+                                
+                                <a href="{{url('add-to-cart/'.$id)}}" class="btn btn-info btn-block text-center" role="button">+</a>
+                                 <a href="{{url('min-to-cart/'.$id)}}" class="btn btn-warning btn-block text-center" role="button">-</a>
+                            </div>
+                           
+                        </div>
+                        @endif
+                    @endif
+                @endforeach
             @endif
             <div class="row total-header-section">
                 <div class="col-lg-6 col-sm-6 col-6">
@@ -64,7 +75,11 @@
             </div>
             <div class="row">
                 <div class="col-lg-12 col-sm-12 col-12 text-center checkout">
+                    @isset($totalBarang)
+                    @if($totalBarang > 0)
                     <a href="{{ url('checkout') }}" class="btn btn-primary btn-block">View all</a>
+                    @endif
+                    @endisset
                 </div>
             </div>
         </div>

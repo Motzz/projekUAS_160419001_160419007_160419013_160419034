@@ -47,7 +47,9 @@ Data Transaction
                                 <td>{{$d->user->name}}</td>
                                 <td>
                                     <!--Buat tombol show atau lihat notanya ke detail-->
-
+                                    <a class="btn btn-primary btn-sm" href="{{route('transaction.show',[$d->id])}}">
+                                        <i class="fas fa-eye"></i> 
+                                    </a>
                                 </td>
 
                             </tr>
